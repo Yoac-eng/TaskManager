@@ -3,6 +3,7 @@ import { useRef,useEffect,useContext } from "react";
 import { NotificationContext } from "./ViewPage";
 import Notification from "./Notification";
 import axios from "axios";
+import config from "../config";
 import { TasksContext } from "./ListView";
 
 export const icons = {
@@ -15,7 +16,7 @@ export const icons = {
     Other:<i className="fa-regular fa-circle-question" style={{marginRight:"10px"}}></i>
 }
 
-export default function TaskListRow({completed,title,category,dueDate,_id,time,description,path}){
+export default function TaskListRow({completed,title,category,dueDate,id,time,description,path}){
     const notification = useContext(NotificationContext);
     const updateTask = useContext(TasksContext);
     const checkDIV = useRef(null);
@@ -29,7 +30,7 @@ export default function TaskListRow({completed,title,category,dueDate,_id,time,d
         
     }
     const removeTask = async ()=>{
-        const {data} = await axios.delete(`http://localhost:3002/api/tasks/${_id}`);
+        const {data} = await axios.delete(`${config.BASE_URL}/${id}`);
         if(data.success){
             notification(currentValue=>{
                 if(currentValue){
@@ -48,7 +49,7 @@ export default function TaskListRow({completed,title,category,dueDate,_id,time,d
         if(e){
             e.preventDefault();                        
         }
-        const {data} = await axios.put(`http://localhost:3002/api/tasks/${_id}`,
+        const {data} = await axios.put(`${config.BASE_URL}/${id}`,
         {
             completed : !completed
         });

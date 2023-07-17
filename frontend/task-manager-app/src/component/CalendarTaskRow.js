@@ -3,7 +3,7 @@ import "./CalendarTaskRow.css";
 
 import {icons} from "./TaskListRow"
 
-export default function CalendarTaskRow({completed,title,category,dueDate,_id,time,description,path}){
+export default function CalendarTaskRow({completed,title,category,dueDate,id,time,description,path}){
     const task = useRef();
     return (
         <div ref={task} className={ completed == true? "calendar_task_row_container completed" : "calendar_task_row_container"} onClick={

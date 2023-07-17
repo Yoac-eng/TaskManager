@@ -1,6 +1,7 @@
 import "./BoardView.css";
 import { useState, useEffect, createContext } from "react";
 import axios from "axios";
+import config from "../config";
 import BoardBox from "./BoardBox";
 import { dragAndDrop } from "./ListView";
 
@@ -10,7 +11,7 @@ export default function BoardViewPage(){
     const [updateTasks , setupdateTasks] = useState(false);
     const [uncompletedTasks,setuncompletedTasks] = useState();
     const getTasks = async ()=>{
-        const {data} = await axios.get("http://localhost:3002/api/tasks");
+        const {data} = await axios.get(config.BASE_URL);
         if(data.success === true){
             const uncompleted =  
             data.data.filter(e=>e.completed === false)

@@ -1,6 +1,7 @@
 
 import "./ListView.css"
 import axios from "axios";
+import config from "../config";
 import { useEffect, useState, createContext } from "react";
 import TaskListRow from "./TaskListRow";
 export const TasksContext = createContext();
@@ -46,7 +47,7 @@ export default function ListView(){
 
 
     const getTasks = async ()=>{
-        const {data} = await axios.get("http://localhost:3002/api/tasks");
+        const {data} = await axios.get(config.BASE_URL);
         if(data.success === true && data.data.length > 0){
             const uncompleted =  
             data.data.filter(e=>e.completed === false)

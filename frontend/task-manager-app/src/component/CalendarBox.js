@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../config";
 import { useEffect, useRef } from "react";
 import "./CalendarBox.css";
 Date.prototype.monthNames = [
@@ -46,7 +47,7 @@ export default function CalendarBox({value,selected,setDate}){
         const month = Date.prototype.monthNames.indexOf(document.querySelector("#calendar_header h5").textContent.replace(/[0-9]/g, '').trim()) +1 ;
         const year = document.querySelector("#calendar_header h5").textContent.replace(/\D/g,'').trim();
         let date = `${value}/${month}/${year}`;
-        const {data} = await axios.get(`http://localhost:3002/api/tasks/date/${date}`);
+        const {data} = await axios.get(`${config.BASE_URL}/date/${date}`);
         if(data.success === true && data.data.length > 0 && selected === true){                     
             textHolder.current.classList = "task";
         }

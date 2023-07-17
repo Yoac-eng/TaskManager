@@ -4,6 +4,8 @@ import Calendar from "./Calendar";
 import CalendarTaskRow from "./CalendarTaskRow";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import config from "../config";
+
 
 
 export default function CalendarView (){
@@ -13,7 +15,7 @@ export default function CalendarView (){
     const getTasks = async ()=>{
         if(date){
 
-        const {data} = await axios.get(`http://localhost:3002/api/tasks/date/${date}`);
+        const {data} = await axios.get(`${config.BASE_URL}/date/${date}`);
         if(data.success === true){
             const uncompleted =  
             data.data.filter(e=>e.completed === false)

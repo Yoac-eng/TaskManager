@@ -2,6 +2,7 @@ import "./TaskForm.css";
 import { forwardRef, useContext, useRef, useState } from "react";
 import Calendar from "./Calendar";
 import axios from "axios";
+import config from "../config";
 import { NotificationContext } from "./ViewPage";
 import Notification from "./Notification";
 const TaskForm = forwardRef( ({reRendertasks},ref)=>{
@@ -25,7 +26,7 @@ const TaskForm = forwardRef( ({reRendertasks},ref)=>{
             path: pathInput.current.value == "" ? "/": pathInput.current.value.replace("C:\\fakepath\\","uploads/")
         }
         try{
-            const {data} = await axios.post("http://localhost:3002/api/tasks/add",task);
+            const {data} = await axios.post(`${config.BASE_URL}/add`,task);
             if(data.success === true){
                 notification(currentValue=>{
                     if(currentValue){
@@ -37,7 +38,7 @@ const TaskForm = forwardRef( ({reRendertasks},ref)=>{
                 const img = document.querySelector('input[type="file"]').files[0];
                 if(img){
                     const {data} =  await axios.post(
-                        "http://localhost:3002/api/tasks/upload",
+                        `${config.BASE_URL}/upload`,
                         {
                             image:img
                         },

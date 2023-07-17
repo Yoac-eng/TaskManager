@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../config";
 import { useRef, useEffect, useContext } from "react";
 import "./BoardBox.css";
 import {icons} from "./TaskListRow";
@@ -36,7 +37,7 @@ function getDateFormula(dueDate) {
     }
     return [day,month,year]
 }
-export default function BoardBox({ completed,title,category,dueDate,_id,time,description,path }){
+export default function BoardBox({ completed,title,category,dueDate,id,time,description,path }){
     const notification = useContext(NotificationContext);
     const updateTask = useContext(TasksContext);
 
@@ -48,7 +49,7 @@ export default function BoardBox({ completed,title,category,dueDate,_id,time,des
         container.current.classList = `board_box_container closed ${category}`; 
         if(container.current.id){
             e.preventDefault();                        
-            const {data} = await axios.put(`http://localhost:3002/api/tasks/${_id}`,
+            const {data} = await axios.put(`${config.BASE_URL}/${id}`,
             {
                 completed : !completed
             });
@@ -68,7 +69,7 @@ export default function BoardBox({ completed,title,category,dueDate,_id,time,des
         
     }
     const removeTask = async ()=>{
-        const {data} = await axios.delete(`http://localhost:3002/api/tasks/${_id}`);
+        const {data} = await axios.delete(`${config.BASE_URL}/${id}`);
         if(data.success){
             notification(currentValue=>{
                 if(currentValue){
