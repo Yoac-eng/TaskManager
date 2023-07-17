@@ -1,15 +1,18 @@
-const express = require("express");
-const Tasks = require("../models/task");
-const multer = require("multer");
+import express from "express";
+import Tasks from "../models/task";
+import multer from "multer";
+import { PrismaClient } from "@prisma/client";
+import path from "path";
+import { log } from "console";
 const router = express.Router();
-const path = require("path");
-module.exports = router;
 
+export { router };
 
+const prisma = new PrismaClient();
 
 router.get("/", async (req,res)=>{
     try {
-        const tasks = await Tasks.find();
+        const tasks = await prisma.task.findMany();
         res.json({success:true, data:tasks});
     } catch (error) {
         res.json({success:false, data:error.message})
@@ -19,7 +22,10 @@ router.get("/", async (req,res)=>{
 router.get("/:id", async (req,res)=>{
     if(req.params){
         try {
-            const task = await Tasks.findById(req.params.id);
+            const task = await prisma.task.findFirst({ where: {
+                id: Number(req.params.id)
+            } });
+            console.log(task);
             if(task){
                 return res.json({success:true, data:task});
             }
@@ -36,7 +42,11 @@ router.get("/:id", async (req,res)=>{
 router.get("/date/:day/:month/:year", async (req,res)=>{
     if(req.params){
         try {
-        const taskDate = await Tasks.find({dueDate:`${req.params.day}/${req.params.month}/${req.params.year}`} );
+        const taskDate = await prisma.task.findFirst({
+            where: {
+                dueDate:`${req.params.day}/${req.params.month}/${req.params.year}`
+            }
+        });
             if(taskDate){
                 return res.json({success:true, data:taskDate});
             }
@@ -47,10 +57,14 @@ router.get("/date/:day/:month/:year", async (req,res)=>{
     }
 })
 router.post("/add", async (req,res)=>{
+    console.log("Bateu no post", req.body);
     try {
-        await Tasks.create(req.body);
+        await prisma.task.create({
+            data: req.body
+        });
         return res.status(200).json({success:true,msg:"Task created successfuly"});
     } catch (error) {
+        console.log(error);
         if("errors" in error){
             let errors = [] ;
             Object.keys(error.errors).forEach(err => {
@@ -63,27 +77,32 @@ router.post("/add", async (req,res)=>{
             return res.json({success:false, msg:error});
     }
 });
-const storageEngine = multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,"../frontend/task-manager-app/public/images")
-    },
-    filename: async (req,file,cb)=>{
-        const task =  await Tasks.findOne().sort({_id : -1});
-        try {
-            await Tasks.updateOne({_id:task.id},{path: "images/"  + task.id+".png"});            
-        } catch (error) {
-        }
-        cb(null,task.id+".png");
-    }
-});
-const upload = multer({storage:storageEngine});
-router.post("/upload",upload.single("image"),(req,res)=>{
-    res.send("Image downloaded succesfuly!");
-});
+// const storageEngine = multer.diskStorage({
+//     destination:(req,file,cb)=>{
+//         cb(null,"../frontend/task-manager-app/public/images")
+//     },
+//     filename: async (req,file,cb)=>{
+//         const task =  await Tasks.findOne().sort({id : -1});
+//         try {
+//             await Tasks.updateOne({id:task.id},{path: "images/"  + task.id+".png"});            
+//         } catch (error) {
+//         }
+//         cb(null,task.id+".png");
+//     }
+// });
+// const upload = multer({storage:storageEngine});
+// router.post("/upload",upload.single("image"),(req,res)=>{
+//     res.send("Image downloaded succesfuly!");
+// });
 router.put("/:id", async (req,res)=>{
     try {
-        await Tasks.updateOne(Tasks.findById(req.params.id),req.body);
-         return res.json({success:true, msg:"Task updated successfuly"})
+        await prisma.task.update({
+            where: {
+                id: Number(req.params.id)
+            },
+            data: req.body
+        });
+        return res.json({success:true, msg:"Task updated successfuly"})
     } catch (error) {
         return res.json({success:false, msg:error.message})        
     }
@@ -92,7 +111,12 @@ router.put("/:id", async (req,res)=>{
 
 router.delete("/:id",async (req,res)=>{
     try {
-        await Tasks.deleteOne(Tasks.findById(req.params.id));
+        await prisma.task.delete({
+            where: {
+                id: req.params.id
+            }
+        });
+        Tasks.deleteOne(Tasks.findById(req.params.id));
         
         return res.json({success:true,msg:"Task deleted successfuly"});
     } catch (error) {
