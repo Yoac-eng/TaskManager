@@ -23,6 +23,10 @@ export default function Main({view, index}){
         setlistView(view);
         setDashbaord([<Dashboard key={index} index={index}/>]);
     },[view]);
+    useEffect(() => {
+        // Gambiarra used to close the forms everytime it is successfull(always be since theres no validation at this point xd)
+        taskForm.current.style.display = "none";
+    }, [notification])
     return(
         <NotificationContext.Provider value={setNotification}>
         <div id="Main">

@@ -12,11 +12,15 @@ export default function CalendarView (){
     const [date,setDate] = useState();
     const [uncompletedTasks,setuncompletedTasks] = useState();
     const [completedTasks,setcompletedTasks] = useState();
+    const [emptyTasks, setEmptyTasks] = useState(false);
     const getTasks = async ()=>{
         if(date){
-
+        
         const {data} = await axios.get(`${config.BASE_URL}/date/${date}`);
         if(data.success === true){
+            // Toggle the flag depending if there is any tasks registered for this day
+            data.data.length > 0 ? setEmptyTasks(false) : setEmptyTasks(true)
+
             const uncompleted =  
             data.data.filter(e=>e.completed === false)
             .map((e,i)=> {
@@ -43,6 +47,7 @@ export default function CalendarView (){
         <div id="calendar_tasks_container">
             {completedTasks}
             {uncompletedTasks}
+            {emptyTasks ? <tr className="empty_tasks"><td>You dont have tasks registered for this day.</td></tr> : ""}
         </div>
         </div>
     )

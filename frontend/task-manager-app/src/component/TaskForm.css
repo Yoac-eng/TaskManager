@@ -97,8 +97,11 @@
     box-shadow: 0 0 2px black;
     
 }
-#category_select {
+#category_select, #task_name_input {
     padding-left: 10px;
+}
+#description_textarea{
+    padding: 10px;
 }
 .input_con span{
     margin: 5px 0;
@@ -106,8 +109,6 @@
 #category_select{
     color: white;
     font-family: 'Lato', 'Font Awesome 5 Free';
-    
-
 }
 .fa,option{
     font-family: 'Lato', 'Font Awesome 5 Free';

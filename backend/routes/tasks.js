@@ -1,9 +1,5 @@
 import express from "express";
-import Tasks from "../models/task";
-import multer from "multer";
 import { PrismaClient } from "@prisma/client";
-import path from "path";
-import { log } from "console";
 const router = express.Router();
 
 export { router };
@@ -12,7 +8,14 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req,res)=>{
     try {
-        const tasks = await prisma.task.findMany();
+        const filtro = req.query.filtro;
+        const tasks = await prisma.task.findMany({
+            where: filtro ? {
+                title: {
+                    contains: filtro,
+                },
+            } : {},
+        });
         res.json({success:true, data:tasks});
     } catch (error) {
         res.json({success:false, data:error.message})
@@ -42,7 +45,7 @@ router.get("/:id", async (req,res)=>{
 router.get("/date/:day/:month/:year", async (req,res)=>{
     if(req.params){
         try {
-        const taskDate = await prisma.task.findFirst({
+        const taskDate = await prisma.task.findMany({
             where: {
                 dueDate:`${req.params.day}/${req.params.month}/${req.params.year}`
             }
@@ -113,7 +116,7 @@ router.delete("/:id",async (req,res)=>{
     try {
         await prisma.task.delete({
             where: {
-                id: Number(req.params.id)
+                id: parseInt(req.params.id)
             }
         });
         

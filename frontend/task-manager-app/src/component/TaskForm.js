@@ -128,7 +128,7 @@ const TaskForm = forwardRef( ({reRendertasks},ref)=>{
                     </div>
                     <div className="input_con desc_con">
                     <span>Description</span>
-                    <textarea ref={descriptionInput}  cols={40} rows={100}>
+                    <textarea ref={descriptionInput} id="description_textarea" cols={40} rows={100}>
 
                     </textarea>
                     </div>
